@@ -1,9 +1,9 @@
 # Pipeline de Dados de Cotações Medallion para Fabric
 
-## pt-br
+### pt-br
 Neste repositório é possível verificar os notebooks utilizados no projeto de medallion em um workspace Fabric F2.
 
-## en-us
+### en-us
 In this repository, you can find the notebooks used in the Medallion architecture project within a Fabric F2 workspace.
 
 ---
@@ -11,10 +11,10 @@ In this repository, you can find the notebooks used in the Medallion architectur
 ## 1. [notebook-ingest-moedas.py](./notebook-ingest-moedas.py)
 
 ### pt-br
-Neste notebook importa-se os dados através do endpoint do Banco Central do Brasil ('Moedas') das moedas disponíveis e cria-se uma tabela através do SparkPy. Toda vez que o notebook for executado, irá sobrescrever as moedas que foram importadas, fazendo com que quando houverem novos registros, esses sejam criados sem afetar as demais.
+Neste notebook importa-se os dados através do endpoint do Banco Central do Brasil (`Moedas`) das moedas disponíveis e cria-se uma tabela através do SparkPy. Toda vez que o notebook for executado, irá sobrescrever as moedas que foram importadas, fazendo com que quando houverem novos registros, esses sejam criados sem afetar as demais.
 
 ### en-us
-This notebook imports data from the Brazilian Central Bank's endpoint ('Moedas') for the available currencies and creates a table using SparkPy. Each time the notebook is run, it overwrites the previously imported currencies, ensuring that any new records are added without affecting the existing ones.
+This notebook imports data from the Brazilian Central Bank's endpoint (`Moedas`) for the available currencies and creates a table using SparkPy. Each time the notebook is run, it overwrites the previously imported currencies, ensuring that any new records are added without affecting the existing ones.
 
 ---
 
