@@ -1,4 +1,4 @@
-# Pipeline de Dados de Cotações Medallion para Fabric
+# Data Pipeline Brazilian Central Bank's
 
 ### pt-br
 Neste repositório é possível verificar os notebooks utilizados no projeto de medallion em um workspace Fabric F2.
