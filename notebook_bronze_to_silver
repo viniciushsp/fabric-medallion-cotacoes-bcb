@@ -1,0 +1,68 @@
+#Inicia o fluxo buscando os arquivos parquet na pasta "Novos" e a partir desses, exclui duplicações
+
+df = spark.read.parquet("Files/Cotacoes/Novos/*.parquet")
+df.createOrReplaceTempView("df")
+
+df = spark.sql("""
+    SELECT 
+        cotacaoCompra AS Cotacao,
+        CAST(dataHoraCotacao AS DATE) AS Data,
+        moeda AS Moeda
+    FROM df
+    ORDER BY Data ASC
+""").dropDuplicates(["Moeda","Data"])
+
+display(df)
+
+#Cria a tabela "cotacoes" caso essa não exista
+
+spark.sql(""" 
+    CREATE TABLE IF NOT EXISTS cotacoes(
+        Cotacao DOUBLE,
+        Data DATE,
+        Moeda STRING
+    ) USING DELTA
+    PARTITIONED BY (Moeda)
+""")
+
+#Realiza a atualização incremental na tabela
+
+df.createOrReplaceTempView("df_novos")
+
+spark.sql("""
+    MERGE INTO cotacoes AS e
+        USING(
+            SELECT 
+                Cotacao, 
+                Data,
+                Moeda
+            FROM 
+                df_novos
+        ) as n
+        ON e.Moeda = n.Moeda
+            AND e.Data = n.Data
+        WHEN NOT MATCHED THEN
+            INSERT (Cotacao,Data,Moeda)
+            VALUES (n.Cotacao,n.Data,n.Moeda)
+""")
+
+#Utiliza a biblioteca mssparkutils para manipular os documentos
+
+from notebookutils import mssparkutils
+
+origem = "abfss://aa42aa99-e0db-4386-9e1e-7effe7521de5@onelake.dfs.fabric.microsoft.com/d74c2f9d-fe77-4047-bbcd-cb99667c6e86/Files/Cotacoes/Novos"
+destino = "abfss://aa42aa99-e0db-4386-9e1e-7effe7521de5@onelake.dfs.fabric.microsoft.com/d74c2f9d-fe77-4047-bbcd-cb99667c6e86/Files/Cotacoes/Carregados"
+
+
+#if not mssparkutils.fs.exists(destino):
+#    mssparkutils.fs.mkdirs(destino)
+
+arquivos = mssparkutils.fs.ls(origem)
+
+for arquivo in arquivos:
+    caminho_origem = arquivo.path
+    nome_arquivo = arquivo.name
+    caminho_destino = destino
+    
+    mssparkutils.fs.mv(caminho_origem, caminho_destino)
+
